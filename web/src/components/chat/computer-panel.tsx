@@ -1,0 +1,16 @@
+"use client";
+import {useEffect,useState} from "react";
+import {X} from "lucide-react";
+import {createComputerPairing,listComputers,revokeComputer} from "@/app/actions/bots";
+import type {Computer} from "@/lib/bots";
+export function ComputerPanel({onClose}:{onClose:()=>void}){
+ const [now,setNow]=useState(0);const [computers,setComputers]=useState<Computer[]>([]);const [code,setCode]=useState("");const [busy,setBusy]=useState(false);const [error,setError]=useState("");
+ useEffect(()=>{let active=true;const refresh=()=>listComputers().then(r=>{if(active&&r.data){setComputers(r.data);setNow(Date.now());}});void refresh();const timer=setInterval(refresh,5000);return()=>{active=false;clearInterval(timer);};},[]);
+ return <section className="flex h-full flex-col bg-wa-panel"><header className="flex h-16 shrink-0 items-center gap-3 border-b border-wa-border px-3 sm:px-4"><button aria-label="Back to chat" onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-wa-hover"><X size={22}/></button><h2 className="text-[16px]">Linux computers</h2></header><div className="wa-scroll min-h-0 flex-1 space-y-4 overflow-y-auto p-5">
+ <p className="text-sm text-wa-muted">Pair the Linux machine you want this account’s bots to use. Commands run with the companion’s OS permissions, after you approve them in chat. Approved file tasks copy their selected attachments to Linux for inspection.</p>
+ {computers.map(c=><div key={c.id} className="flex items-center justify-between gap-3 rounded-xl border border-wa-border p-3"><span className="text-sm">{c.name}<small className="block text-wa-muted">{c.last_seen&&now-Date.parse(c.last_seen)<30000?"Online":"Offline"}</small></span><button disabled={busy} className="text-sm text-red-500" onClick={async()=>{setBusy(true);const r=await revokeComputer(c.id);if(r.error)setError(r.error);else setComputers(old=>old.filter(v=>v.id!==c.id));setBusy(false);}}>Disconnect</button></div>)}
+ <a href="/blew-linux-companion.mjs" download className="block text-sm text-wa-accent underline">Download latest Linux companion</a><p className="text-xs text-wa-muted">For file tasks, replace your existing companion with this version and restart it. Your saved pairing is retained.</p>
+ <button disabled={busy} className="rounded-full bg-wa-green px-4 py-2 text-sm text-black disabled:opacity-50" onClick={async()=>{setBusy(true);setError("");const r=await createComputerPairing();if(r.error)setError(r.error);if(r.data)setCode(r.data.code);setBusy(false);}}>Pair Linux computer</button>
+ {code&&<div className="space-y-2 text-sm"><p>On Linux with Node.js 24+, download and run the companion:</p><a href="/blew-linux-companion.mjs" download className="text-wa-accent underline">Download Linux companion</a><pre className="overflow-x-auto rounded-lg bg-wa-input p-3">node blew-linux-companion.mjs --pair</pre><p>Enter this website’s origin, then this one-time code (expires in 5 minutes):</p><code className="block select-all break-all rounded-lg bg-wa-input p-3">{code}</code><p className="text-xs text-wa-muted">Remote connections require HTTPS. Keep the companion running. Disconnect here or stop it on Linux to stop access.</p></div>}
+ {error&&<p role="alert" className="text-sm text-red-500">{error}</p>}</div></section>;
+}

@@ -1,0 +1,2 @@
+export function spokenText(text:string){return text.replace(/```[\s\S]*?```/g,"I've put the code in the chat.").replace(/\[([^\]]+)\]\([^)]+\)/g,"$1").replace(/https?:\/\/\S+/g,"the link in the chat").replace(/[#*_`|]/g,"").replace(/\[Linux task proposed[^\]]*\]/g,"Please review and approve the Linux task in the chat.").trim().slice(0,5000);}
+export function speechChunks(text:string){return (spokenText(text).match(/[^.!?]+[.!?]*/g)||[]).flatMap(sentence=>sentence.match(/[\s\S]{1,300}(?:\s|$)|[\s\S]{1,300}/g)||[]).map(s=>s.trim()).filter(Boolean);}

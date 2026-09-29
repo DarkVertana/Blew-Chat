@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="320" height="320" viewBox="0 0 320 320" fill="none" stroke="#6f6555" stroke-opacity="0.22" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+  <defs>
+    <g id="heart"><path d="M0 8 C-9 1 -10 -6 -5 -8 C-2 -9 0 -6 0 -5 C0 -6 2 -9 5 -8 C10 -6 9 1 0 8 Z"/></g>
+    <g id="star"><path d="M0 -9 L2.6 -3 L9 -2.6 L4.2 1.8 L5.6 8 L0 4.8 L-5.6 8 L-4.2 1.8 L-9 -2.6 L-2.6 -3 Z"/></g>
+    <g id="sparkle"><path d="M0 -8 L1.6 -1.6 L8 0 L1.6 1.6 L0 8 L-1.6 1.6 L-8 0 L-1.6 -1.6 Z"/></g>
+    <g id="bubble"><path d="M-9 -7 h18 a3 3 0 0 1 3 3 v8 a3 3 0 0 1 -3 3 h-9 l-5 4 v-4 h-4 a3 3 0 0 1 -3 -3 v-8 a3 3 0 0 1 3 -3 z"/><circle cx="-4" cy="-1" r="0.9"/><circle cx="0" cy="-1" r="0.9"/><circle cx="4" cy="-1" r="0.9"/></g>
+    <g id="note"><path d="M-2 6 V-8 L8 -10 V4"/><circle cx="-5" cy="6" r="3"/><circle cx="5" cy="4" r="3"/></g>
+    <g id="cup"><path d="M-8 -4 h14 v7 a7 7 0 0 1 -14 0 z M6 -2 h3 a2.5 2.5 0 0 1 0 5 h-3"/><path d="M-4 -8 q1 -2 0 -4 M0 -8 q1 -2 0 -4"/></g>
+    <g id="sun"><circle r="4"/><path d="M0 -9 v3 M0 6 v3 M-9 0 h3 M6 0 h3 M-6.4 -6.4 l2.1 2.1 M4.3 4.3 l2.1 2.1 M-6.4 6.4 l2.1 -2.1 M4.3 -4.3 l2.1 -2.1"/></g>
+    <g id="cloud"><path d="M-6 6 h12 a4 4 0 0 0 0 -8 a6 6 0 0 0 -11.5 -1.5 a4.5 4.5 0 0 0 -0.5 9.5 z"/></g>
+    <g id="mail"><rect x="-9" y="-6" width="18" height="12" rx="2"/><path d="M-9 -5 l9 6 l9 -6"/></g>
+    <g id="flower"><circle r="2"/><circle cx="0" cy="-5" r="2.5"/><circle cx="4.8" cy="-1.5" r="2.5"/><circle cx="3" cy="4" r="2.5"/><circle cx="-3" cy="4" r="2.5"/><circle cx="-4.8" cy="-1.5" r="2.5"/></g>
+    <g id="smile"><circle r="8"/><circle cx="-3" cy="-2" r="0.9"/><circle cx="3" cy="-2" r="0.9"/><path d="M-4 2 q4 4 8 0"/></g>
+    <g id="plus"><path d="M0 -5 v10 M-5 0 h10"/></g>
+    <g id="ring"><circle r="5"/></g>
+    <g id="bolt"><path d="M2 -9 L-5 1 h5 l-2 8 l7 -10 h-5 z"/></g>
+    <g id="camera"><rect x="-9" y="-5" width="18" height="12" rx="2"/><circle cy="1" r="3.5"/><path d="M-4 -5 l2 -3 h4 l2 3"/></g>
+    <g id="leaf"><path d="M-8 8 C-8 -4 2 -9 9 -9 C9 -1 4 8 -8 8 z M-8 8 L5 -5"/></g>
+    <g id="plane"><path d="M-9 -1 L9 -8 L2 9 L-1 1 z M-1 1 L9 -8"/></g>
+    <g id="headphones"><path d="M-8 4 v-3 a8 8 0 0 1 16 0 v3"/><rect x="-9" y="2" width="4" height="6" rx="1.5"/><rect x="5" y="2" width="4" height="6" rx="1.5"/></g>
+    <g id="pin"><path d="M0 9 C-5 3 -7 0 -7 -3 a7 7 0 0 1 14 0 c0 3 -2 6 -7 12 z"/><circle cy="-3" r="2.5"/></g>
+    <g id="gift"><rect x="-8" y="-3" width="16" height="11" rx="1.5"/><path d="M-8 -3 h16 M0 -3 v11 M0 -3 c-3 0 -6 -1 -5 -4 c1 -2 4 0 5 4 c1 -4 4 -6 5 -4 c1 3 -2 4 -5 4"/></g>
+    <g id="pizza"><path d="M-8 -6 L0 9 L8 -6 a12 12 0 0 0 -16 0 z"/><circle cx="-2" cy="-3" r="1.2"/><circle cx="3" cy="-1" r="1.2"/><circle cx="0" cy="3" r="1.2"/></g>
+    <g id="icecream"><path d="M-5 -2 h10 l-5 11 z"/><circle cy="-5" r="5"/></g>
+    <g id="dots"><circle cx="-5" r="1"/><circle r="1"/><circle cx="5" r="1"/></g>
+  </defs>
+  <use xlink:href="#heart" transform="translate(28 30) rotate(-12)"/>
+  <use xlink:href="#cup" transform="translate(88 24) rotate(8)"/>
+  <use xlink:href="#star" transform="translate(150 36) rotate(15) scale(0.9)"/>
+  <use xlink:href="#bubble" transform="translate(214 28) rotate(-6)"/>
+  <use xlink:href="#sun" transform="translate(282 40) rotate(10)"/>
+  <use xlink:href="#note" transform="translate(50 82) rotate(-10)"/>
+  <use xlink:href="#sparkle" transform="translate(118 74) scale(0.8)"/>
+  <use xlink:href="#cloud" transform="translate(184 84)"/>
+  <use xlink:href="#plus" transform="translate(246 78) rotate(20) scale(0.8)"/>
+  <use xlink:href="#camera" transform="translate(300 96) rotate(-8)"/>
+  <use xlink:href="#flower" transform="translate(22 136) rotate(12)"/>
+  <use xlink:href="#mail" transform="translate(92 132) rotate(-14)"/>
+  <use xlink:href="#ring" transform="translate(150 120)"/>
+  <use xlink:href="#smile" transform="translate(212 138) rotate(6)"/>
+  <use xlink:href="#leaf" transform="translate(272 146) rotate(-20)"/>
+  <use xlink:href="#bolt" transform="translate(52 188) rotate(10)"/>
+  <use xlink:href="#plane" transform="translate(126 182) rotate(-18)"/>
+  <use xlink:href="#dots" transform="translate(180 176)"/>
+  <use xlink:href="#headphones" transform="translate(236 194) rotate(8)"/>
+  <use xlink:href="#heart" transform="translate(300 200) rotate(14) scale(0.8)"/>
+  <use xlink:href="#pin" transform="translate(26 246) rotate(-6)"/>
+  <use xlink:href="#gift" transform="translate(94 240) rotate(6)"/>
+  <use xlink:href="#star" transform="translate(158 234) rotate(-12) scale(0.75)"/>
+  <use xlink:href="#pizza" transform="translate(218 250) rotate(16)"/>
+  <use xlink:href="#sparkle" transform="translate(280 244) rotate(20)"/>
+  <use xlink:href="#icecream" transform="translate(56 296) rotate(-8)"/>
+  <use xlink:href="#ring" transform="translate(120 294) scale(0.7)"/>
+  <use xlink:href="#bubble" transform="translate(186 300) rotate(8) scale(0.85)"/>
+  <use xlink:href="#plus" transform="translate(246 298) scale(0.8)"/>
+  <use xlink:href="#note" transform="translate(300 292) rotate(10) scale(0.85)"/>
+</svg>

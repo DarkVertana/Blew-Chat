@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+/*
+ * Theme. <html data-theme="light|dark"> is set before paint by the bootstrap
+ * script in layout.tsx: the device preference by default, or the user's
+ * choice from Settings → Chats → Theme. Tailwind's dark: variant keys off the
+ * same attribute so every page switches together.
+ */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root {
+  color-scheme: light;
+
+  --wa-bg: #ffffff;
+  --wa-panel: #ffffff;
+  --wa-main: #f7f8fa;
+  --wa-card: #ffffff;
+  --wa-elevated: #f0f2f5;
+  --wa-hover: #f5f6f6;
+  --wa-input: #f0f2f5;
+  --wa-border: #e9edef;
+  --wa-text: #111b21;
+  --wa-muted: #667781;
+  --wa-green: #21c063;
+  --wa-accent: #1a8f4e;
+  --wa-green-deep: #e6f8e0;
+  --wa-tick: #53bdeb;
+  --wa-in: #ffffff;
+  --wa-out: #d9fdd3;
+  --wa-chat: #efeae2;
+  --wa-scrollbar: #c9cdd0;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --wa-bg: #161717;
+  --wa-panel: #1c1e1e;
+  --wa-main: #161717;
+  --wa-card: #242626;
+  --wa-elevated: #242626;
+  --wa-hover: #202222;
+  --wa-input: #2e2f2f;
+  --wa-border: #2b2d2d;
+  --wa-text: #e9edef;
+  --wa-muted: #8d9396;
+  --wa-green: #21c063;
+  --wa-accent: #21c063;
+  --wa-green-deep: #103529;
+  --wa-tick: #53bdeb;
+  --wa-in: #242626;
+  --wa-out: #144d37;
+  --wa-chat: #131414;
+  --wa-scrollbar: #3a3c3c;
+}
+
+@theme inline {
+  --color-wa-bg: var(--wa-bg);
+  --color-wa-panel: var(--wa-panel);
+  --color-wa-main: var(--wa-main);
+  --color-wa-card: var(--wa-card);
+  --color-wa-elevated: var(--wa-elevated);
+  --color-wa-hover: var(--wa-hover);
+  --color-wa-input: var(--wa-input);
+  --color-wa-border: var(--wa-border);
+  --color-wa-text: var(--wa-text);
+  --color-wa-muted: var(--wa-muted);
+  --color-wa-green: var(--wa-green);
+  --color-wa-accent: var(--wa-accent);
+  --color-wa-green-deep: var(--wa-green-deep);
+  --color-wa-tick: var(--wa-tick);
+  --color-wa-in: var(--wa-in);
+  --color-wa-out: var(--wa-out);
+  --color-wa-chat: var(--wa-chat);
+}
+
+/* Thin scrollbars inside the chat UI. */
+.wa-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--wa-scrollbar) transparent;
+}
+.wa-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.wa-scroll::-webkit-scrollbar-thumb {
+  background: var(--wa-scrollbar);
+  border-radius: 3px;
+}
+.wa-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Conversation canvas: chosen colour per theme, WhatsApp-style doodles on top. */
+.wa-canvas {
+  background-color: var(--wp-light);
+}
+:root[data-theme="dark"] .wa-canvas {
+  background-color: var(--wp-dark);
+}
+.wa-doodles {
+  background-image: url("/chat-doodle-light.svg");
+  background-size: 320px 320px;
+}
+:root[data-theme="dark"] .wa-doodles {
+  background-image: url("/chat-doodle-dark.svg");
+}

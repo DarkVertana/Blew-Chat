@@ -1,0 +1,10 @@
+node_modules
+.next
+out
+.git
+.env*
+Dockerfile
+.dockerignore
+*.md
+
+.engine-data

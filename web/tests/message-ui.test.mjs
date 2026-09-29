@@ -1,0 +1,13 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import React from 'react';
+import {renderToStaticMarkup} from 'react-dom/server';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import {remarkUnderline} from '../src/lib/remark-underline.ts';
+import {parseMessageForm,formResponse,messageParts} from '../src/lib/message-ui.ts';
+const form={title:'Your preference',fields:[{id:'size',label:'Size',type:'radio',required:true,options:[{label:'Medium',value:'m'}]},{id:'notes',label:'Notes',type:'text'}],actions:[{id:'agree',label:'Agree',value:'I agree'},{id:'disagree',label:'Disagree',value:'I disagree'}]};
+test('Markdown renders bold italic underline lists tables and code without raw HTML execution',()=>{const html=renderToStaticMarkup(React.createElement(Markdown,{remarkPlugins:[remarkGfm,remarkUnderline],skipHtml:true},'**Bold** *Italic* ++Underline++\n\n- One\n- Two\n\n`sample()`\n\n<script>alert(1)</script>\n\n[x](javascript:alert(1))'));for(const expected of ['<strong>Bold</strong>','<em>Italic</em>','<u>Underline</u>','<ul>','<code>sample()</code>'])assert(html.includes(expected));assert(!html.includes('<script>'));assert(!html.includes('href="javascript:'));});
+test('validated controls only construct a human-readable chat response',()=>{const parsed=parseMessageForm(JSON.stringify({...form,url:'https://evil.example',command:'do not execute'}));assert(parsed);assert.equal(parsed.url,undefined);assert.equal(parsed.command,undefined);assert.equal(formResponse(parsed,{size:'m',notes:'No onions'},parsed.actions[0]),'Your preference\nSize: Medium\nNotes: No onions\nResponse: I agree');assert.throws(()=>formResponse(parsed,{},parsed.actions[0]),/Please complete Size/);});
+test('invalid or executable schemas remain inert text',()=>{for(const fields of [[{id:'constructor',label:'Bad',type:'text'}],[{id:'x',label:'Script',type:'script'}],[{id:'x',label:'Choice',type:'select',options:[]}],Array(9).fill(form.fields[0])])assert.equal(parseMessageForm(JSON.stringify({...form,fields})),null);assert.deepEqual(messageParts('```blew-ui\n{"script":"evil"}\n```'),[{text:'```blew-ui\n{"script":"evil"}\n```'}]);});
+test('valid form fences become controls while surrounding explanation remains',()=>{const parts=messageParts('Before\n```blew-ui\n'+JSON.stringify(form)+'\n```\nAfter');assert.equal(parts.length,3);assert.equal(parts[1].form.title,'Your preference');});

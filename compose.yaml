@@ -1,0 +1,102 @@
+# Base stack. `docker compose up` also merges compose.override.yaml (dev).
+# For a production-style run, use only this file:
+#   docker compose -f compose.yaml up --build -d
+name: blew
+
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-blew}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-blew}
+      POSTGRES_DB: ${POSTGRES_DB:-blew}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  api:
+    build:
+      context: ./api
+      target: prod
+    restart: unless-stopped
+    environment:
+      SCHEDULER_SECRET: ${SCHEDULER_SECRET:-}
+      MEMORY_SECRET: ${MEMORY_SECRET:-}
+      MEMORY_URL: http://memory:8091
+      PORT: "8080"
+      DATABASE_URL: postgres://${POSTGRES_USER:-blew}:${POSTGRES_PASSWORD:-blew}@db:5432/${POSTGRES_DB:-blew}?sslmode=disable
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
+      TRUSTED_PROXY_CIDRS: ${TRUSTED_PROXY_CIDRS:-}
+      WEB_PUSH_SUBJECT: ${WEB_PUSH_SUBJECT:-https://localhost}
+    ports:
+      - "${API_PORT:-8080}:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "/app/server", "-healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+  memory:
+    build: ./memory
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-blew}:${POSTGRES_PASSWORD:-blew}@db:5432/${POSTGRES_DB:-blew}?sslmode=disable
+      MEMORY_SECRET: ${MEMORY_SECRET:-}
+    volumes:
+      - memory-data:/data
+      - memory-models:/models
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8091/health')"]
+      interval: 15s
+      timeout: 3s
+      retries: 10
+
+  speech:
+    build: ./speech
+    restart: unless-stopped
+    volumes:
+      - speech-models:/models
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8090/health')"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+  web:
+    build:
+      context: ./web
+      target: prod
+    restart: unless-stopped
+    environment:
+      # Server-side URL: Next.js reaches the API over the compose network.
+      SCHEDULER_SECRET: ${SCHEDULER_SECRET:-}
+      API_URL: http://api:8080
+      SPEECH_URL: http://speech:8090
+      ENGINE_DATA_DIR: /var/lib/blew-engines
+    volumes:
+      - engine-data:/var/lib/blew-engines
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  memory-data:
+  memory-models:
+  speech-models:
+  engine-data:
+  db-data:

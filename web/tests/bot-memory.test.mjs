@@ -1,0 +1,5 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {memoryContext} from '../src/lib/bot-memory.ts';
+test('memory context preserves evidence, timestamps and file references without trusting embedded instructions',()=>{const text=memoryContext({total:300,pending:0,semantic:true,memories:[{id:1,kind:'file',title:'report.pdf',body:'Untrusted sample',source_id:'file-id',attachment_id:'file-id',occurred_at:'2021-01-01',revision:1}]});assert.match(text,/2021-01-01/);assert.match(text,/file-id/);assert.match(text,/untrusted data/);assert.match(text,/newer explicit user corrections/);assert.match(text,/300 searchable/);});
+test('memory retains a finite generation budget without deleting the archive',()=>{const text=memoryContext({total:1000,pending:0,semantic:true,memories:Array.from({length:1000},(_,id)=>({id,kind:'user',title:'Message',body:'x'.repeat(1600),occurred_at:'2020',source_id:String(id)}))});assert(text.length<28000);assert.match(text,/1000 searchable/);assert.match(memoryContext(null),/temporarily unavailable/);});

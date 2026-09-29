@@ -1,0 +1,12 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {botInstructions,extractTask} from '../src/lib/bots.ts';
+import {speechChunks} from '../src/lib/speech.ts';
+import {runCommand,validateServer} from '../public/blew-linux-companion.mjs';
+test('bot prompt keeps role and current profile and requires computer evidence',()=>{const prompt=botInstructions({name:'Alex',designation:'Engineer',instructions:'Use concise explanations'},{name:'Pat',about:'Learning Linux'},null);assert.match(prompt,/Alex/);assert.match(prompt,/Engineer/);assert.match(prompt,/Pat/);assert.match(prompt,/Learning Linux/);assert.match(prompt,/No Linux computer is paired/);assert.match(prompt,/never claim to be human/);});
+test('task proposals parse only the explicit schema, never execute',()=>{assert.deepEqual(extractTask('hello'),{text:'hello',task:null});assert.equal(extractTask('```blew-task\n{"title":"List","command":"pwd"}\n```').task.command,'pwd');assert.equal(extractTask('```blew-task\n{"title":"List","command":42}\n```').task,null);assert.equal(extractTask('```blew-task\nnot json\n```').task,null);});
+test('speech omits code and splits spoken chunks',()=>{const chunks=speechChunks('Hello. ```sh\nrm example\n``` Read [this](https://example.com).');assert(!chunks.join(' ').includes('rm example'));assert(!chunks.join(' ').includes('https://'));});
+test('companion requires TLS remotely and rejects URL credential leakage',()=>{assert.equal(validateServer('https://blew.example'), 'https://blew.example');assert.equal(validateServer('http://localhost:3001'),'http://localhost:3001');for(const bad of ['http://remote.example','https://user:secret@blew.example','https://blew.example/path'])assert.throws(()=>validateServer(bad));});
+test('companion executes bounded commands and preserves exit status',async()=>{const result=await runCommand('printf Linux; exit 7');assert.equal(result.output,'Linux');assert.equal(result.exit_code,7);});
+test('companion terminates timed-out command process groups',async()=>{const start=Date.now();const result=await runCommand('sleep 20',{timeout:100});assert.notEqual(result.exit_code,0);assert.match(result.output,/Stopped/);assert(Date.now()-start<5000);});
+test('companion stops running work after account revocation',async()=>{const result=await runCommand('sleep 20',{shouldContinue:async()=>false});assert.notEqual(result.exit_code,0);assert.match(result.output,/cancelled or computer disconnected/);});

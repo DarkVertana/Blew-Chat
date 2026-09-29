@@ -1,0 +1,47 @@
+# Development overrides, merged automatically by `docker compose up`.
+# Source is bind-mounted; Go reloads via air, Next.js via `next dev`.
+services:
+  db:
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+
+  api:
+    build:
+      target: dev
+    volumes:
+      - ./api:/app
+      - go-mod-cache:/go/pkg/mod
+      - go-build-cache:/root/.cache/go-build
+    healthcheck:
+      # The dev image is golang:alpine, which has busybox wget.
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/health"]
+      interval: 5s
+      retries: 20
+      start_period: 30s
+
+  speech:
+    command: ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8090", "--reload", "--reload-dir", "/app"]
+    volumes:
+      - ./speech/server.py:/app/server.py:ro
+
+  web:
+    build:
+      target: dev
+    # Polling is reliable across macOS/Colima bind mounts, including new files.
+    command: ["pnpm", "exec", "next", "dev", "--webpack"]
+    environment:
+      NEXT_TELEMETRY_DISABLED: "1"
+      WATCHPACK_POLLING: "1000"
+    volumes:
+      - engine-dev-data:/var/lib/blew-engines
+      - ./web:/app
+      # Keep Linux node_modules and build output out of the macOS bind mount.
+      - web-node-modules:/app/node_modules
+      - web-next:/app/.next
+
+volumes:
+  engine-dev-data:
+  go-mod-cache:
+  go-build-cache:
+  web-node-modules:
+  web-next:

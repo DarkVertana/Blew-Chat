@@ -1,0 +1,5 @@
+fastapi==0.116.1
+uvicorn==0.35.0
+qdrant-client==1.19.1
+fastembed==0.8.1
+psycopg[binary]==3.3.6

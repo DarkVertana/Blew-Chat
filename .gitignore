@@ -1,0 +1,12 @@
+.env
+.DS_Store
+
+.engine-data/
+
+# Local previews, runtime state and backups
+artifacts/
+__pycache__/
+*.pyc
+*.log
+*.dump
+*.backup
