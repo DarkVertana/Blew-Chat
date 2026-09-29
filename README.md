@@ -211,3 +211,30 @@ Start/rebuild with `docker compose up -d --build`. Set a random `MEMORY_SECRET` 
 Chat changes publish through PostgreSQL `LISTEN/NOTIFY` and authenticated same-origin WebSockets at `/api/live/bots/:id`. Next.js proxies upgrades to Go. The WebSocket checks the exact configured `CORS_ORIGIN`, chat ownership and the HttpOnly session, and closes revoked/expired sessions. Reverse proxies must forward WebSocket Upgrade/Connection headers. Clients reconnect automatically, fetch snapshots on reconnect/tab wake, and use polling only when disconnected. Optimistic sends remain visible, stale pending snapshots cannot replace completed replies, and the scroll pane keeps the composer on-screen without dragging users away from older messages.
 
 Message bubbles render safe Markdown (bold, italic, lists, code, tables, links and `++underline++`) without raw HTML execution. Bots can emit one validated `blew-ui` JSON form per reply with radio choices, dropdowns, checkboxes, text, multiline, number/date fields and action buttons. Clicking submits a normal chat response. Form answers are linked to their source turn, survive reloads and reject duplicate submissions. These controls do not approve Linux commands, execute arbitrary scripts, navigate, make payments or place orders. Existing messages gain text formatting; interactive controls appear in new replies when the bot emits the supported schema.
+
+### Linux companion background service
+
+The existing companion can now run as a **systemd user service**, outside Docker.
+On the target Linux machine, install Node.js 24+, clone this repository and pair
+as your regular user (do not use sudo):
+
+```sh
+node web/public/blew-linux-companion.mjs --pair
+# Once paired, press Ctrl+C to stop the foreground companion.
+node scripts/linux/companion-service.mjs install
+```
+
+The installer copies the companion into your private user data directory and
+starts `blew-companion.service`. Re-run `install` after updating the repository.
+Manage it with the same script using `status`, `logs`, `stop`, `start` or
+`uninstall`. Uninstall retains credentials and downloaded task files; revoke
+access through the chat's computer panel. Missing/revoked pairing stops the
+service rather than repeatedly asking for interactive input.
+
+This starts at user-session startup. Headless operation before login requires
+an administrator-configured persistent user manager; the installer does not
+silently enable login lingering. Desktop tasks require a graphical session and
+its permissions. Stop the foreground companion before installation to avoid two
+pollers. Node's installed path must remain available after upgrades. This is the
+service foundation; typed desktop tools and autonomous multi-step execution are
+still planned in `docs/linux-server-plan.md`.

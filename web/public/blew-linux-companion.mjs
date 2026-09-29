@@ -10,7 +10,7 @@ import {createInterface} from 'node:readline/promises';
 
 export function runCommand(command,{cwd=homedir(),timeout=90000,shouldContinue=async()=>true,fileEnvironment={}}={}) {
  return new Promise(resolve=>{
-  const env={...Object.fromEntries(Object.entries(fileEnvironment).filter(([key])=>/^BLEW_FILE_[a-f0-9]{48}$/.test(key))),PATH:process.env.PATH||'/usr/local/bin:/usr/bin:/bin',HOME:homedir(),USER:process.env.USER||'',LANG:process.env.LANG||'C.UTF-8',DISPLAY:process.env.DISPLAY||'',WAYLAND_DISPLAY:process.env.WAYLAND_DISPLAY||'',XDG_RUNTIME_DIR:process.env.XDG_RUNTIME_DIR||'',DBUS_SESSION_BUS_ADDRESS:process.env.DBUS_SESSION_BUS_ADDRESS||''};
+  const env={...Object.fromEntries(Object.entries(fileEnvironment).filter(([key])=>/^BLEW_FILE_[a-f0-9]{48}$/.test(key))),PATH:process.env.PATH||'/usr/local/bin:/usr/bin:/bin',HOME:homedir(),USER:process.env.USER||'',LANG:process.env.LANG||'C.UTF-8',DISPLAY:process.env.DISPLAY||'',XAUTHORITY:process.env.XAUTHORITY||'',WAYLAND_DISPLAY:process.env.WAYLAND_DISPLAY||'',XDG_RUNTIME_DIR:process.env.XDG_RUNTIME_DIR||'',DBUS_SESSION_BUS_ADDRESS:process.env.DBUS_SESSION_BUS_ADDRESS||''};
   const child=spawn('/bin/sh',['-c',command],{cwd,env,stdio:['ignore','pipe','pipe'],detached:true});
   let output=Buffer.alloc(0),reason='',done=false,checking=false;
   const kill=()=>{try{process.kill(-child.pid,'SIGKILL');}catch{child.kill('SIGKILL');}};
@@ -49,6 +49,7 @@ async function main(){
  const directory=path.join(process.env.XDG_CONFIG_HOME||path.join(homedir(),'.config'),'blew-code');const file=path.join(directory,'companion.json');
  let config;
  try{config=JSON.parse(await readFile(file,'utf8'));}catch{}
+ if(process.argv.includes('--service')&&!config){console.error('Pairing is missing. Pair interactively, then restart the service.');process.exitCode=78;return;}
  if(process.argv.includes('--pair')||!config){
   const readline=createInterface({input:process.stdin,output:process.stdout});
   try{
@@ -79,7 +80,7 @@ async function main(){
     }catch{result={output:'Could not prepare the approved task files, or the task was cancelled. No command was started.',exit_code:1};}
     await request('tasks/'+task.id,'POST',result);console.log(`Task ${task.id} finished (exit ${result.exit_code}).`);
    }
-  }catch(e){if(e.message==='DISCONNECTED'){console.log('Computer disconnected by the account owner. Pair again with --pair.');break;}console.error('Connection interrupted; retrying shortly.');}
+  }catch(e){if(e.message==='DISCONNECTED'){console.log('Computer disconnected by the account owner. Pair again with --pair.');process.exitCode=78;break;}console.error('Connection interrupted; retrying shortly.');}
   if(!stopping)await new Promise(resolve=>setTimeout(resolve,3000));
  }
 }
